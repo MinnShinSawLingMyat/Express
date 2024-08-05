@@ -12,19 +12,29 @@ const itemSchema = z.object({
 exports.create = async (req, res) => {
     const request = {
         ...req.body,
-        image: req.file.filename
+        projectId: Number(req.body.projectId),
+        image    : req.file.filename
     };
 
     const validation = itemSchema.safeParse(request);
 
     if (!validation.success) {
         const err = {
-            errors: validatedFields.error.flatten().fieldErrors,
+            errors: validation.error.flatten().fieldErrors,
             message: 'Missing Fields. Failed to Login.',
         };
 
         res.status(400).json(err);
     } 
 
-    res.json(validation.data);
+    try {
+        const { data } = validation;
+
+        const item = await prisma.item.create({ data });
+
+        res.json(item);
+    } catch (e) {
+        res.status(500).json({ error: e });
+    }
+    
 }
