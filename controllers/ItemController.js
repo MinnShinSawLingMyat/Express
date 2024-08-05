@@ -1,28 +1,30 @@
-const Joi = require("joi");
+const { z } = require("zod");
 const prisma = require("../utils/prismaClient");
 
-const itemSchema = Joi.object({
-    projectId: Joi.number().integer().required(),
-    link: Joi.string().uri().optional(),
-    title: Joi.string().required(),
-    description: Joi.string().optional(),
-    image: Joi.string().uri().required(),
-});
+const itemSchema = z.object({
+    projectId: z.number().int().nonnegative(),
+    link: z.string().url().optional(),
+    title: z.string(),
+    description: z.string().optional(),
+    image: z.string(),
+})
 
 exports.create = async (req, res) => {
-
     const request = {
         ...req.body,
         image: req.file.filename
     };
 
-    const { error, value } = itemSchema.validate(request);
+    const validation = itemSchema.safeParse(request);
 
-    if(error) {
-        res
-            .status(400)
-            .json(error);
-    } else {
-        res.json(value);
-    }
+    if (!validation.success) {
+        const err = {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Login.',
+        };
+
+        res.status(400).json(err);
+    } 
+
+    res.json(validation.data);
 }
