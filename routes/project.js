@@ -6,6 +6,7 @@ const ProjectController = require('../controllers/ProjectController');
 
 router.get("/",      ProjectController.index);
 router.get("/:slug", ProjectController.show);
+router.put("/:id",   ProjectController.update);
 
 
 module.exports = { projectRouter: router };
