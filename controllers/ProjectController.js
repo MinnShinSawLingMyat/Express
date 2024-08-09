@@ -17,7 +17,7 @@ exports.index = async (req, res) => {
                     include: { skill: true }
                 },
             },
-            
+            orderBy:{id: 'asc'}
         });
 
         const result = data.map((project) => {
@@ -42,7 +42,9 @@ exports.show = async (req, res) => {
         const data = await prisma.project.findFirst({
             where  : { slug },
             include: {
-                items : true,
+                items : {
+                    orderBy:{id: 'asc'}
+                },
                 skills: { 
                     include: { skill: true }
                 },

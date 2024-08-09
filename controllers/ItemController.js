@@ -3,7 +3,7 @@ const prisma = require("../utils/prismaClient");
 
 const itemSchema = z.object({
     projectId: z.number().int().nonnegative(),
-    link: z.string().url().optional(),
+    link: z.string().optional(),
     title: z.string(),
     description: z.string().optional(),
     image: z.string(),
